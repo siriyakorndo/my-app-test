@@ -3,7 +3,7 @@ import "./App.css";
 import { ClockCircleFilled, CloseOutlined, EditFilled, PhoneFilled, PrinterOutlined, SmileOutlined } from "@ant-design/icons";
 import fake from './data/fake.json';
 import ScheduleTable from "./components/table";
-import RoomQueue from "./components/room";
+import RoomQueue from "./components/roomQueue";
 
 interface Person {
   id: number;

@@ -1,6 +1,29 @@
 [
-    { "roomid": 1, "name": "Janny","userId":"1","date":"2 วัน","queue":1},
-    { "roomid": 2, "name": "Jane","userId":"1","date":"2 วัน","queue":2},
-    { "roomid": 3, "name": "Jim","userId":"1","date":"2 วัน","queue":3}
+    {
+        "id": "01",
+        "patientName": "ทดสอบ หนึ่ง",
+        "patientCode": "12123",
+        "daysLeft": 5,
+        "status": "05",
+        "roomId":3
+      },
+      {
+        "id": "02",
+        "patientName": "ทดสอบ สอง",
+        "patientCode": "12345",
+        "daysLeft": 9,
+        "status": "05",
+        "roomId":2
+
+      },
+      {
+        "id": "03",
+        "patientName": "ทดสอบ สาม",
+        "patientCode": "15481",
+        "daysLeft": 7,
+        "status": "05",
+        "roomId":3
+      }
 ]
+
   
