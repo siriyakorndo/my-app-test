@@ -1,0 +1,27 @@
+[
+    {
+      "id": "D001",
+      "doctorName": "คุณหมอ Jenny Smith",
+      "contact": {
+        "phone": "+1 555-123-4567",
+        "email": "jennie.smith@hospital.com"
+      }
+    },
+    {
+      "id": "D002",
+      "doctorName": "คุณหมอ Emma Johnson",
+      "contact": {
+        "phone": "+1 555-987-6543",
+        "email": "emma.johnson@hospital.com"
+      }
+    },
+    {
+      "id": "D003",
+      "doctorName": "คุณหมอ Michael Brown",
+      "contact": {
+        "phone": "+1 555-234-5678",
+        "email": "michael.brown@hospital.com"
+      }
+    }
+  ]
+  

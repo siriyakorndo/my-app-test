@@ -1,0 +1,47 @@
+[
+  {
+    "meetingId": "M001",
+    "patient": {
+      "id": "P001",
+      "name": "ทดสอบ หนึ่ง",
+      "patientCode": "12123",
+      "tel": "0123456789",
+      "status": "Active"
+    },
+    "doctorId": "D001",
+    "meetingDate": "2024-12-18",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "service": "รักษารากฟัน"
+  },
+  {
+    "meetingId": "M002",
+    "patient": {
+      "id": "P002",
+      "name": "ทดสอบ สอง",
+      "patientCode": "12345",
+      "tel": "0123456789",
+      "status": "Active"
+    },
+    "doctorId": "D002",
+    "meetingDate": "2024-12-18",
+    "startTime": "12:00",
+    "endTime": "13:00",
+    "service": "ถอนฟันคุด"
+  },
+  {
+    "meetingId": "M003",
+    "patient": {
+      "id": "P003",
+      "name": "ทดสอบ สาม",
+      "patientCode": "15481",
+      "tel": "0123456789",
+      "status": "Active"
+    },
+    "doctorId": "D003",
+    "meetingDate": "2024-12-20",
+    "startTime": "15:00",
+    "endTime": "16:00",
+    "service": "ถอนฟันคุด"
+  }
+]

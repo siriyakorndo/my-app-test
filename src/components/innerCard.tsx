@@ -2,16 +2,7 @@ import React from 'react';
 import { Avatar } from 'antd';
 import { UserOutlined, ShareAltOutlined, StopOutlined } from '@ant-design/icons';
 
-interface newType{
-    id: string,
-    patientName: string,
-    patientCode: string,
-    daysLeft: number,
-    status: string,
-    roomId:number
-}
-
-const InnerCard: React.FC<{ data: newType }> = ({ data }) => {
+const InnerCard: React.FC<{ data: cardInnerType }> = ({ data }) => {
   return (
     <div
       style={{

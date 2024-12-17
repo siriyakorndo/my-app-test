@@ -1,23 +1,15 @@
-import React from "react";
-import { Table, Row, Col, Select } from "antd";
-import { ClockCircleFilled } from "@ant-design/icons";
-// Define types for task and time slot
-// import "../../public/images/1.png";
-interface ScheduleTask {
-  task: string;
-  startTime: string;
-  endTime: string;
-}
-
-// Your task data with specific time slots
-const scheduleData: ScheduleTask[] = [
-  { task: "Team Meeting", startTime: "09:00", endTime: "09:45" },
-  { task: "Project Discussion", startTime: "10:30", endTime: "11:30" },
-  { task: "Client Call", startTime: "12:00", endTime: "13:00" },
-  { task: "Lunch Break", startTime: "13:00", endTime: "14:00" },
-  { task: "Code Review", startTime: "15:00", endTime: "16:00" },
-  { task: "Wrap Up", startTime: "17:00", endTime: "17:30" },
-];
+import React, { useState } from "react";
+import { Table, Row, Col, Select, Modal } from "antd";
+import {
+  ClockCircleFilled,
+  EditFilled,
+  PhoneFilled,
+  PrinterOutlined,
+  SmileOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import doctorData from "../data/fakeDoctor.json";
+import meetingData from "../data/meetingDetail.json";
 
 // Helper function to convert time (HH:MM) to minutes since midnight
 const convertToMinutes = (time: string): number => {
@@ -47,19 +39,37 @@ const generateTimeSlots = (): { time: string }[] => {
 const timeSlots = generateTimeSlots();
 
 const ScheduleTable: React.FC = () => {
-  // Map scheduleData to a lookup for quick task assignment
-  const taskLookup = scheduleData.map(({ task, startTime, endTime }) => ({
-    task,
-    startMinutes: convertToMinutes(startTime),
-    endMinutes: convertToMinutes(endTime),
+  const [selectDoctor, setSelectDoctor] = useState("D001");
+  const [selectDoctorName, setSelectDoctorName] = useState("Dr. Jenny Smith");
+  const [selectedMeeting, setSelectedMeeting] = useState<
+    MeetingData | undefined
+  >(undefined);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const scheduleTasks = meetingData.map((meeting: MeetingData) => ({
+    task: `${meeting.patient.name} | ${meeting.service} | ${meeting.patient.id} <br/> ${meeting.patient.tel} | ${meeting.startTime} - ${meeting.endTime} `, // The service name is mapped to task
+    startTime: meeting.startTime,
+    endTime: meeting.endTime,
+    doctorId: meeting.doctorId,
+    meetingId: meeting.meetingId,
   }));
 
-  const options = [
-    { value: "lucy", label: "Lucy (101)" },
-    { value: "jack", label: "Jack (102)" },
-    { value: "tom", label: "Tom (103)" },
-  ];
-  // Merge the time slots with the tasks
+  const taskLookup = scheduleTasks
+    .filter((meeting) => meeting.doctorId === selectDoctor)
+    .map(({ task, startTime, endTime, meetingId }) => {
+      const startMinutes = convertToMinutes(startTime);
+      const endMinutes = convertToMinutes(endTime);
+      const duration = endMinutes - startMinutes;
+      return {
+        task,
+        startMinutes,
+        endMinutes,
+        duration,
+        rowspan: duration > 15 ? duration / 15 : 1,
+        meetingId,
+      };
+    });
+
   const dataSource = timeSlots.map((slot) => {
     const slotMinutes = convertToMinutes(slot.time);
     const task = taskLookup.find(
@@ -69,35 +79,60 @@ const ScheduleTable: React.FC = () => {
       key: slot.time,
       time: slot.time,
       task: task ? task.task : "",
+      rowspan: task ? task.rowspan : 1,
+      meetingId: task ? task.meetingId : "",
     };
   });
 
-  // Define table columns
+  const getMeetingById = (id: string): void => {
+    const result = meetingData.find((meeting) => meeting.meetingId === id);
+    setSelectedMeeting(result);
+  };
+
   const columns = [
     {
       title: "Time",
       dataIndex: "time",
       key: "time",
       render: (text: string) => <span>{text}</span>,
-      width:"10%"
+      width: "10%",
     },
     {
       title: "Task",
       dataIndex: "task",
       key: "task",
-      render: (text: string) => <span>{text || "-"}</span>,
+      render: (text: string, record: { meetingId: string }) => (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: `${text || " "}`,
+          }}
+          onClick={() => {
+            getMeetingById(record.meetingId);
+            showModal();
+          }}
+        />
+      ),
     },
   ];
-  //   const rowClassName = (record: ScheduleTask, index: number): string => {
-  //     return index % 2 === 0 ? 'even-row' : 'odd-row';
-  //   };
+
+  const options = doctorData.map((doctor) => ({
+    value: doctor.id,
+    label: `${doctor.doctorName}`,
+  }));
+
   const onChange = (value: { value: string; label: string }) => {
-    console.log(`Selected: ${value}`);
+    setSelectDoctor(value.value);
+    setSelectDoctorName(value.label);
   };
 
-  const onSearch = (searchText: string) => {
-    console.log(`Search: ${searchText}`);
+  const showModal = () => {
+    setIsModalOpen(true);
   };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       <Row gutter={[16, 8]}>
@@ -106,8 +141,10 @@ const ScheduleTable: React.FC = () => {
             labelInValue
             showSearch
             onChange={onChange}
-            onSearch={onSearch}
-            defaultValue={{ value: "lucy", label: "Lucy (101)" }}
+            filterOption={(input, option) =>
+              option?.label.toLowerCase().includes(input.toLowerCase()) ?? false
+            }
+            defaultValue={{ value: "D001", label: "คุณหมอ Jenny Smith" }}
             options={options}
             style={{ width: "100%" }}
           />
@@ -121,20 +158,20 @@ const ScheduleTable: React.FC = () => {
               color: "#fff",
               borderRadius: "10px",
               justifyContent: "space-between",
-
-              display: "flex", // Use flexbox to align elements horizontally
-              alignItems: "center", // Vertically center the items (text and image)
+              display: "flex",
+              alignItems: "center",
             }}
           >
             <span style={{ marginRight: 10 }}>ทันตแพทย์</span>{" "}
             {/* Space between text and image */}
             <img
-              src={`../../public/images/1.png`}
+              src={`../../public/images/` + selectDoctor + `.png`}
               alt="Doctor"
               style={{
                 borderRadius: "50%",
                 width: 30,
-                height: 30, // To ensure it's perfectly circular
+                height: 30,
+                backgroundColor: "#fff",
               }}
             />
           </div>
@@ -158,14 +195,85 @@ const ScheduleTable: React.FC = () => {
             dataSource={dataSource}
             pagination={false}
             showHeader={false}
-            // rowClassName={rowClassName}
-            // bordered
-            scroll={{ x:"max-content" ,y: 'calc(100vh - 160px)' }} 
+            scroll={{ x: "max-content", y: "calc(100vh - 160px)" }}
             style={{ width: "100%" }}
-
           />
         </Col>
       </Row>
+
+      <Modal centered open={isModalOpen} onCancel={handleCancel} footer={false}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "5px",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{ color: "#21b498", fontWeight: "bold", fontSize: "18px" }}
+          >
+            {" "}
+            นัดหมาย <br />
+            ทันตแพทย์ {selectDoctorName}
+          </div>
+          <img
+            src={`../../public/images/` + selectDoctor + `.png`}
+            alt="Doctor"
+            style={{
+              borderRadius: "50%",
+              width: 40,
+              height: 40,
+              backgroundColor: "#fff",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ paddingLeft: "10px", marginTop: "5px" }}>
+            <div>
+              <UserOutlined style={{ color: "#21b498", fontSize: "18px" }} />{" "}
+              {selectedMeeting?.patient.name}
+            </div>
+            <div>
+              <SmileOutlined style={{ color: "#21b498", fontSize: "18px" }} />{" "}
+              {selectedMeeting?.service}
+            </div>
+            <div>
+              <PhoneFilled style={{ color: "#21b498", fontSize: "18px" }} />{" "}
+              {selectedMeeting?.patient.tel}
+            </div>
+            <div>ประเมินค่าใช้จ่าย 0.00</div>
+            <div>
+              <ClockCircleFilled
+                style={{ color: "#21b498", fontSize: "18px" }}
+              />{" "}
+              {selectedMeeting?.startTime} - {selectedMeeting?.endTime} น.
+            </div>
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              right: "10px",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <PrinterOutlined
+              style={{ color: "#21b498", fontSize: "24px", padding: "10px" }}
+            />
+            <EditFilled
+              style={{ color: "#21b498", fontSize: "24px", padding: "10px" }}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

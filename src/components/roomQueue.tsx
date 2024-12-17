@@ -13,7 +13,7 @@ const RoomQueue: React.FC = () => {
     acc[patient.roomId] = (acc[patient.roomId] || 0) + 1;
     return acc;
   }, {});
-  console.log(numberOfPatientsByRoom)
+  // console.log(numberOfPatientsByRoom)
 
   return (
     <>
