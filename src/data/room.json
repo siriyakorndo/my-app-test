@@ -1,0 +1,6 @@
+[
+    { "roomid": 1, "name": "Janny","userId":"1","date":"2 วัน","queue":1},
+    { "roomid": 2, "name": "Jane","userId":"1","date":"2 วัน","queue":2},
+    { "roomid": 3, "name": "Jim","userId":"1","date":"2 วัน","queue":3}
+]
+  

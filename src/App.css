@@ -1,0 +1,14 @@
+/* /* App.css */
+
+/* Style for even rows */
+.even-row {
+  background-color: #f0f0f0;  /* Light grey for even rows */
+}
+
+/* Style for odd rows */
+.odd-row {
+  background-color: #ffffff;  /* Light blue for odd rows */
+}
+.ant-table-row:hover {
+  background-color: white !important; /* Set a custom color */
+}
